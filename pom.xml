@@ -20,5 +20,10 @@
     	<artifactId>logback-classic</artifactId>
   			<version>1.2.3</version>
     </dependency>
+    <dependency>
+    	<groupId>org.ujmp</groupId>
+    	<artifactId>ujmp-jmatio</artifactId>
+    	<version>0.3.0</version>
+    </dependency>
   </dependencies>
 </project>
