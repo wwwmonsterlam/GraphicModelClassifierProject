@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.ujmp.core.Matrix;
 
 public class Main 
 {
@@ -19,10 +20,15 @@ public class Main
 	
     public static void main( String[] args ) throws IOException
     {
-    	for(int i = 0; i < DATA_FILE_NAMES.length; i++) {
-        	Utils.getTrainingSet(Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[i]));
-        	Utils.getTestingSet(Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[i]));
-    	}
+//    	for(int i = 0; i < DATA_FILE_NAMES.length; i++) {
+//        	Utils.getTrainingSet(Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[i]));
+//        	Utils.getTestingSet(Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[i]));
+//    	}
+//    	
+
+    	Matrix[] trainingSet = Utils.getTrainingSet(Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[0]));
+    	Matrix[] testingSet = Utils.getTestingSet(Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[0]));
     	
+    	LogisticClassifier logisticClassifier = new LogisticClassifier(trainingSet, testingSet);
     }
 }
