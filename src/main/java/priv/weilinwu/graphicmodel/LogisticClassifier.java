@@ -12,6 +12,7 @@ public class LogisticClassifier {
 	private Matrix[] trainingSet;
 	private Matrix[] testingSet;
 	private Matrix theta;
+	private Matrix gradientDescendDirection;
 	private long featureCount;
 	private long trainingSampleCount;
 	private final double tolerance = 0.0001;
@@ -26,6 +27,8 @@ public class LogisticClassifier {
 		this.trainingSampleCount = trainingSet[0].getColumnCount();
 		theta = DenseMatrix.Factory.zeros(this.featureCount + 1 , 1);
 		logger.debug(theta.toString());
+		
+		generateNewGradientDescendDirection();
 	}
 	
 	private Matrix[] addOneToEachColumn(Matrix[] m) {
@@ -38,7 +41,7 @@ public class LogisticClassifier {
 	}
 	
 	// derivative of the objective function
-	public Matrix getGradientDescendDirection() {
+	public void generateNewGradientDescendDirection() {
 		Matrix sum = DenseMatrix.Factory.zeros(featureCount + 1, 1);
 		
 		for(int z = 0; z <= 1; z++) {
@@ -52,7 +55,7 @@ public class LogisticClassifier {
 		
 		logger.debug(sum.toString());
 		
-		return sum;
+		this.gradientDescendDirection = sum;
 	}
 	
 	public double getValueOfLogisticFunction(Matrix theta, Matrix x) {
@@ -68,15 +71,15 @@ public class LogisticClassifier {
 	}
 	
 	// get (local) optimal step size
-	public double getStepSize(Matrix gradientDescendDirection) {
-		double stepSize = 0.0;
+	public double getOptimalStepSize() {
+		double stepSize = 1.0;
 		
 		return stepSize;
 	}
 	
 	// return true if theta is updated, return false if the difference is within tolerance
-	public boolean updateTheta(Matrix gradientDescendDirection) {
-		double stepSize = getStepSize(gradientDescendDirection);
+	public boolean updateTheta() {
+		double stepSize = getOptimalStepSize();
 		Matrix difference = gradientDescendDirection.times(stepSize);
 		if(isWithinTolerance(difference)) {
 			return false;
@@ -96,4 +99,20 @@ public class LogisticClassifier {
 		return true;
 	}
 	
+	// this is used to help find optimal step size
+	public double getValueOfObjectiveFunctionderivativeWithRespectToStepSize(double stepSize) {
+		double sum = 0;
+		
+		for(int z = 0; z <= 1; z++) {
+			for(int i = 0; i < trainingSampleCount; i++) {
+				// Get the i th sample
+				Matrix xi = trainingSet[z].subMatrix(Ret.NEW, 0, i, featureCount, i);
+				Matrix newTheta = theta.plus(gradientDescendDirection.times(stepSize));
+				sum += gradientDescendDirection.transpose().times(xi).getAsDouble(0, 0) *
+						(z - getValueOfLogisticFunction(newTheta, xi));
+			}
+		}
+		
+		return sum;
+	}
 }
