@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.ujmp.core.DenseMatrix;
 import org.ujmp.core.Matrix;
 
 public class Main 
@@ -30,5 +31,12 @@ public class Main
     	Matrix[] testingSet = Utils.getTestingSet(Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[0]));
     	
     	LogisticClassifier logisticClassifier = new LogisticClassifier(trainingSet, testingSet);
+    	
+//    	Matrix a = DenseMatrix.Factory.ones(4, 1);
+//    	Matrix b = DenseMatrix.Factory.ones(4, 1);
+//    	
+//    	logisticClassifier.getValueOfLogisticFunction(a, b);
+    	
+    	logisticClassifier.getGradientDescendDirection();
     }
 }
