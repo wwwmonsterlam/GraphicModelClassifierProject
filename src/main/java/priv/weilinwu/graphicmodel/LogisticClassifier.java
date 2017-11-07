@@ -64,8 +64,6 @@ public class LogisticClassifier {
 		double productOfThetaAndX = theta.transpose().mtimes(x).getAsDouble(0, 0);
 		double value = 1.0 / (1 + Math.exp(-1 * productOfThetaAndX));
 		
-//		logger.debug(theta.toString());
-//		logger.debug(theta.transpose().toString());
 		logger.debug("product Of Theta And X is " + productOfThetaAndX);
 		logger.debug("the value is " + value);
 		
@@ -124,7 +122,9 @@ public class LogisticClassifier {
 	
 	// return true if theta is updated, return false if the difference is within tolerance
 	public boolean updateTheta() {
+		generateNewGradientDescendDirection();
 		double stepSize = getOptimalStepSize();
+//		double stepSize = 0.0000000001;
 		Matrix difference = gradientDescendDirection.times(stepSize);
 		if(isWithinTolerance(difference)) {
 			return false;

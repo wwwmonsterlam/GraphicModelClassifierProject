@@ -37,6 +37,11 @@ public class Main
 //    	
 //    	logisticClassifier.getValueOfLogisticFunction(a, b);
     	
-    	logisticClassifier.getGradientDescendDirection();
+//    	logisticClassifier.getGradientDescendDirection();
+    	
+    	logger.debug(logisticClassifier.getTrainedTheta().toString());
+    	logger.debug("finished");
+//    	double a = 1.0 / (1 + Math.exp(-1 * -1.6163756857560038E14));
+//    	logger.debug(a + ";");
     }
 }
