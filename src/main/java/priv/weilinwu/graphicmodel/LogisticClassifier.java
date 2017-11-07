@@ -1,5 +1,7 @@
 package priv.weilinwu.graphicmodel;
 
+import java.io.ObjectInputStream.GetField;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ujmp.core.DenseMatrix;
@@ -72,9 +74,52 @@ public class LogisticClassifier {
 	
 	// get (local) optimal step size
 	public double getOptimalStepSize() {
-		double stepSize = 1.0;
-		
+		double[] pointPair = getInitialPointPair();
+		updatePointPairUntillDistanceWithinTolerance(pointPair[0], pointPair[1]);
+
+		double stepSize = (pointPair[0] + pointPair[1]) / 2.0;
 		return stepSize;
+	}
+	
+	public double[] getInitialPointPair() {
+		double stepSize = 0.1;
+		double searchSize = 1.0;
+		double left = 0;
+		double right = 0;
+		
+		if(getValueOfObjectiveFunctionderivativeWithRespectToStepSize(stepSize) <= 0) {
+			right = stepSize;
+			left = right - searchSize;
+			while(getValueOfObjectiveFunctionderivativeWithRespectToStepSize(left) <= 0) {
+				searchSize *= 2;
+				left = right - searchSize;
+			}
+		} else {
+			left = stepSize;
+			right = left + searchSize;
+			while(getValueOfObjectiveFunctionderivativeWithRespectToStepSize(right) > 0) {
+				searchSize *= 2;
+				right = left + searchSize;
+			}
+		}
+		
+		double[] initialPointPaire = {left, right};
+		return initialPointPaire;
+	}
+	
+	public void updatePointPairUntillDistanceWithinTolerance(double left, double right) {
+		if(right - left < tolerance) {
+			return;
+		}
+		
+		double middle = (right - left) / 2.0;
+		if(getValueOfObjectiveFunctionderivativeWithRespectToStepSize(middle) <= 0) {
+			right = middle;
+		} else {
+			left = middle;
+		}
+		
+		updatePointPairUntillDistanceWithinTolerance(left, right);
 	}
 	
 	// return true if theta is updated, return false if the difference is within tolerance
@@ -115,4 +160,11 @@ public class LogisticClassifier {
 		
 		return sum;
 	}
+	
+	public Matrix getTrainedTheta() {
+		while(updateTheta());
+		
+		return theta;
+	}
 }
+
