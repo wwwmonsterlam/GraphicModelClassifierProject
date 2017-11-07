@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.ujmp.core.DenseMatrix;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.calculation.Calculation.Ret;
+import org.ujmp.core.doublematrix.calculation.entrywise.creators.Zeros;
 
 public class LogisticClassifier {
 	public static final Logger logger = LoggerFactory.getLogger(LogisticClassifier.class);
@@ -17,20 +18,24 @@ public class LogisticClassifier {
 	private Matrix gradientDescendDirection;
 	private long featureCount;
 	private long trainingSampleCount;
-	private final double tolerance = 0.0001;
+	private final double tolerance = 0.001;
 	
 	LogisticClassifier(Matrix[] trainingSet, Matrix[] testingSet) {
 		// For calculation simplicity, add one to each column
 		// In this way, theta can direct multiply each sample vector in the data set
 		this.trainingSet = addOneToEachColumn(trainingSet);
 		this.testingSet = addOneToEachColumn(testingSet);
-		logger.debug(this.testingSet[0].toString());
+//		logger.debug(this.testingSet[0].toString());
 		this.featureCount = trainingSet[0].getRowCount();
 		this.trainingSampleCount = trainingSet[0].getColumnCount();
 		theta = DenseMatrix.Factory.zeros(this.featureCount + 1 , 1);
-		logger.debug(theta.toString());
+//		logger.debug(theta.toString());
 		
 		generateNewGradientDescendDirection();
+	}
+	
+	public Matrix getTheta() {
+		return theta;
 	}
 	
 	private Matrix[] addOneToEachColumn(Matrix[] m) {
@@ -51,11 +56,11 @@ public class LogisticClassifier {
 				// Get the i th sample
 				Matrix xi = trainingSet[z].subMatrix(Ret.NEW, 0, i, featureCount, i);
 				sum = sum.plus(xi.times(z - getValueOfLogisticFunction(theta, xi)));
-				logger.debug(xi.times(z - getValueOfLogisticFunction(theta, xi)).toString());
+//				logger.debug(xi.times(z - getValueOfLogisticFunction(theta, xi)).toString());
 			}
 		}
 		
-		logger.debug(sum.toString());
+//		logger.debug(sum.toString());
 		
 		this.gradientDescendDirection = sum;
 	}
@@ -64,8 +69,8 @@ public class LogisticClassifier {
 		double productOfThetaAndX = theta.transpose().mtimes(x).getAsDouble(0, 0);
 		double value = 1.0 / (1 + Math.exp(-1 * productOfThetaAndX));
 		
-		logger.debug("product Of Theta And X is " + productOfThetaAndX);
-		logger.debug("the value is " + value);
+//		logger.debug("product Of Theta And X is " + productOfThetaAndX);
+//		logger.debug("the value is " + value);
 		
 		return value;
 	}
@@ -73,29 +78,33 @@ public class LogisticClassifier {
 	// get (local) optimal step size
 	public double getOptimalStepSize() {
 		double[] pointPair = getInitialPointPair();
-		updatePointPairUntillDistanceWithinTolerance(pointPair[0], pointPair[1]);
+		updatePointPairUntillDistanceWithinTolerance(pointPair);
 
 		double stepSize = (pointPair[0] + pointPair[1]) / 2.0;
 		return stepSize;
 	}
 	
 	public double[] getInitialPointPair() {
-		double stepSize = 0.1;
-		double searchSize = 1.0;
+		double startingPoint = 0;
+		double searchSize = 0.01;
 		double left = 0;
 		double right = 0;
 		
-		if(getValueOfObjectiveFunctionderivativeWithRespectToStepSize(stepSize) <= 0) {
-			right = stepSize;
+		if(getValueOfObjectiveFunctionderivativeWithRespectToStepSize(startingPoint) <= 0) {
+			right = startingPoint;
 			left = right - searchSize;
 			while(getValueOfObjectiveFunctionderivativeWithRespectToStepSize(left) <= 0) {
+//				logger.debug("searching for left point of the step size function, left = " + left);
+//				logger.debug("the derivative value is: " + getValueOfObjectiveFunctionderivativeWithRespectToStepSize(left));
 				searchSize *= 2;
 				left = right - searchSize;
 			}
 		} else {
-			left = stepSize;
+			left = startingPoint;
 			right = left + searchSize;
 			while(getValueOfObjectiveFunctionderivativeWithRespectToStepSize(right) > 0) {
+//				logger.debug("searching for right point of the step size function, right = " + right);
+//				logger.debug("the derivative value is: " + getValueOfObjectiveFunctionderivativeWithRespectToStepSize(right));
 				searchSize *= 2;
 				right = left + searchSize;
 			}
@@ -105,26 +114,29 @@ public class LogisticClassifier {
 		return initialPointPaire;
 	}
 	
-	public void updatePointPairUntillDistanceWithinTolerance(double left, double right) {
-		if(right - left < tolerance) {
+	public void updatePointPairUntillDistanceWithinTolerance(double[] pointPair) {
+		double left = pointPair[0];
+		double right = pointPair[1];
+		if(right - left < tolerance * 0.1) {
 			return;
 		}
 		
-		double middle = (right - left) / 2.0;
+		double middle = (right - left) / 2.0 + left;
 		if(getValueOfObjectiveFunctionderivativeWithRespectToStepSize(middle) <= 0) {
 			right = middle;
 		} else {
 			left = middle;
 		}
 		
-		updatePointPairUntillDistanceWithinTolerance(left, right);
+		pointPair[0] = left;
+		pointPair[1] = right;
+		updatePointPairUntillDistanceWithinTolerance(pointPair);
 	}
 	
 	// return true if theta is updated, return false if the difference is within tolerance
 	public boolean updateTheta() {
 		generateNewGradientDescendDirection();
 		double stepSize = getOptimalStepSize();
-//		double stepSize = 0.0000000001;
 		Matrix difference = gradientDescendDirection.times(stepSize);
 		if(isWithinTolerance(difference)) {
 			return false;
@@ -136,6 +148,7 @@ public class LogisticClassifier {
 	
 	// return true if every entry is no larger than the tolerance value
 	public boolean isWithinTolerance(Matrix m) {
+//		logger.debug("the difference is: " + m.toString());
 		for(int i = 0; i <= featureCount; i++) {
 			if(m.getAsDouble(i, 0) > tolerance) {
 				return false;
@@ -152,19 +165,63 @@ public class LogisticClassifier {
 			for(int i = 0; i < trainingSampleCount; i++) {
 				// Get the i th sample
 				Matrix xi = trainingSet[z].subMatrix(Ret.NEW, 0, i, featureCount, i);
+//				logger.debug("xi is \n" + xi.toString());
 				Matrix newTheta = theta.plus(gradientDescendDirection.times(stepSize));
-				sum += gradientDescendDirection.transpose().times(xi).getAsDouble(0, 0) *
+//				logger.debug("new theta is" + newTheta.toString());
+				sum += gradientDescendDirection.transpose().mtimes(xi).getAsDouble(0, 0) *
 						(z - getValueOfLogisticFunction(newTheta, xi));
+//				logger.debug("test point 1: " + gradientDescendDirection.transpose().mtimes(xi).toString());
+//				logger.debug("gradient descend direction: " + gradientDescendDirection.toString());
+//				logger.debug("Now the sum is: " + sum);
 			}
 		}
 		
 		return sum;
 	}
 	
-	public Matrix getTrainedTheta() {
-		while(updateTheta());
+	public double getValueOfObjectiveFunction() {
+		double sum = 0;
+		for(int z = 0; z <= 1; z++) {
+			for(int i = 0; i < trainingSampleCount; i++) {
+				// Get the i th sample
+				Matrix xi = trainingSet[z].subMatrix(Ret.NEW, 0, i, featureCount, i);
+				sum += z * Math.log(getValueOfLogisticFunction(theta, xi)) + 
+						(1 - z) * Math.log(1 - getValueOfLogisticFunction(theta, xi));
+			}
+		}
 		
-		return theta;
+		return sum;
+	}
+	
+	public void train() {
+		int i = 1;
+		while(updateTheta()) {
+//			logger.debug("The {" + i + "} update finished!");
+//			logger.debug("the value of objective function is: " + getValueOfObjectiveFunction());
+			System.out.print(".");
+			i++;
+		}
+		
+		logger.debug("Total iteration count: " + i);
+	}
+	
+	public double getCorrectionRateUsingTestingSet() {
+		train();
+		long sizeOfTesingSet = testingSet[0].getColumnCount() * 2;
+		int errorPredictionCount = 0;
+		
+		for(int z = 0; z <= 1; z++) {
+			for(int i = 0; i < testingSet[0].getColumnCount(); i++) {
+				// Get the i th sample
+				Matrix xi = trainingSet[z].subMatrix(Ret.NEW, 0, i, featureCount, i);
+				int prediction = theta.transpose().mtimes(xi).getAsDouble(0, 0) <= 0 ? 0 : 1;
+				if(prediction != z) {
+					errorPredictionCount++;
+				}
+			}
+		}
+		
+		return (double)(sizeOfTesingSet - errorPredictionCount) / sizeOfTesingSet;
 	}
 }
 

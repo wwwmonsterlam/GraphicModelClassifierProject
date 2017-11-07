@@ -26,22 +26,17 @@ public class Main
 //        	Utils.getTestingSet(Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[i]));
 //    	}
 //    	
-
-    	Matrix[] trainingSet = Utils.getTrainingSet(Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[0]));
-    	Matrix[] testingSet = Utils.getTestingSet(Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[0]));
-    	
-    	LogisticClassifier logisticClassifier = new LogisticClassifier(trainingSet, testingSet);
-    	
-//    	Matrix a = DenseMatrix.Factory.ones(4, 1);
-//    	Matrix b = DenseMatrix.Factory.ones(4, 1);
-//    	
-//    	logisticClassifier.getValueOfLogisticFunction(a, b);
-    	
-//    	logisticClassifier.getGradientDescendDirection();
-    	
-    	logger.debug(logisticClassifier.getTrainedTheta().toString());
-    	logger.debug("finished");
-//    	double a = 1.0 / (1 + Math.exp(-1 * -1.6163756857560038E14));
-//    	logger.debug(a + ";");
+    	for(int i = 0; i < 11; i++) {
+	    	Matrix[] trainingSet = Utils.getTrainingSet(Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[i]));
+	    	Matrix[] testingSet = Utils.getTestingSet(Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[i]));
+	    	
+	    	LogisticClassifier logisticClassifier = new LogisticClassifier(trainingSet, testingSet);
+	    	
+	    	logger.debug("result of the {" + (i + 1) + "}th dataset:");
+	    	logger.debug("correction rate: " + logisticClassifier.getCorrectionRateUsingTestingSet());
+	    	if(i <= 6) {
+	    		logger.debug("final theta is: " + logisticClassifier.getTheta().toString());
+	    	}
+    	}
     }
 }
