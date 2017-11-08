@@ -54,4 +54,34 @@ public class Utils {
 		return testingSet;
 		
 	}
+	
+	// scale each data so that each one is between -0.5 and 0.5
+	public static void scaleData(Matrix[] m) {
+		long rowCount = m[0].getRowCount();
+		long columnCount = m[0].getColumnCount();
+		
+		for(int z = 0; z <= 1; z++) {
+			for(int r = 0; r < rowCount; r++) {
+				double sum = m[z].getAsDouble(r, 0);
+				double max = sum;
+				double min = sum;
+				
+				for(int c = 1; c < columnCount; c++) {
+					double x = m[z].getAsDouble(r, c);
+					sum += x;
+					max = Math.max(x, max);
+					min = Math.min(x, min);
+				}
+				
+				double mean = sum / columnCount;
+				double scope = max - min;
+				
+				for(int c = 0; c < columnCount; c++) {
+					double x = m[z].getAsDouble(r, c);
+					m[z].setAsDouble((x) / scope, r, c);
+				}
+			}
+		}
+		
+	}
 }

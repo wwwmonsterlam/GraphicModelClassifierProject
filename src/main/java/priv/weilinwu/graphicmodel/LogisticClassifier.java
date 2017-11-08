@@ -18,7 +18,7 @@ public class LogisticClassifier {
 	private Matrix gradientDescendDirection;
 	private long featureCount;
 	private long trainingSampleCount;
-	private final double tolerance = 0.001;
+	private final double tolerance = 0.1;
 	
 	LogisticClassifier(Matrix[] trainingSet, Matrix[] testingSet) {
 		// For calculation simplicity, add one to each column
@@ -136,11 +136,19 @@ public class LogisticClassifier {
 	// return true if theta is updated, return false if the difference is within tolerance
 	public boolean updateTheta() {
 		generateNewGradientDescendDirection();
-		double stepSize = getOptimalStepSize();
-		Matrix difference = gradientDescendDirection.times(stepSize);
-		if(isWithinTolerance(difference)) {
+//		double stepSize = getOptimalStepSize();
+////		double stepSize = 0.005;
+//		Matrix difference = gradientDescendDirection.times(stepSize);
+//		if(isWithinTolerance(difference)) {
+//			return false;
+//		} else {
+//			theta = theta.plus(gradientDescendDirection.times(stepSize));
+//			return true;
+//		}
+		if(isWithinTolerance(gradientDescendDirection)) {
 			return false;
 		} else {
+			double stepSize = getOptimalStepSize();
 			theta = theta.plus(gradientDescendDirection.times(stepSize));
 			return true;
 		}
@@ -150,7 +158,7 @@ public class LogisticClassifier {
 	public boolean isWithinTolerance(Matrix m) {
 //		logger.debug("the difference is: " + m.toString());
 		for(int i = 0; i <= featureCount; i++) {
-			if(m.getAsDouble(i, 0) > tolerance) {
+			if(Math.abs(m.getAsDouble(i, 0)) > tolerance) {
 				return false;
 			}
 		}
@@ -205,7 +213,7 @@ public class LogisticClassifier {
 		logger.debug("Total iteration count: " + i);
 	}
 	
-	public double getCorrectionRateUsingTestingSet() {
+	public double getCorrectionRateUsingTestingSetUsingOriginAsStartingPoint() {
 		train();
 		long sizeOfTesingSet = testingSet[0].getColumnCount() * 2;
 		int errorPredictionCount = 0;
@@ -222,6 +230,43 @@ public class LogisticClassifier {
 		}
 		
 		return (double)(sizeOfTesingSet - errorPredictionCount) / sizeOfTesingSet;
+	}
+	
+	public double getCorrectionRateUsingTestingSetUsingMultipleRandomStartingPoint(int randomStartingPointAmount) {
+		if(randomStartingPointAmount <= 0) {
+			return 0;
+		}
+		
+		setThetaUsingRandomNumber();
+		long sizeOfTesingSet = testingSet[0].getColumnCount() * 2;
+		double correctionRate = 0;
+		
+		while(randomStartingPointAmount-- > 0) {
+			train();
+			int errorPredictionCount = 0;
+			
+			for(int z = 0; z <= 1; z++) {
+				for(int i = 0; i < testingSet[0].getColumnCount(); i++) {
+					// Get the i th sample
+					Matrix xi = trainingSet[z].subMatrix(Ret.NEW, 0, i, featureCount, i);
+					int prediction = theta.transpose().mtimes(xi).getAsDouble(0, 0) <= 0 ? 0 : 1;
+					if(prediction != z) {
+						errorPredictionCount++;
+					}
+				}
+			}
+			
+			double tempRate = (double)(sizeOfTesingSet - errorPredictionCount) / sizeOfTesingSet;
+			correctionRate = Math.max(correctionRate, tempRate);
+		}
+		
+		return correctionRate;
+	}
+	
+	public void setThetaUsingRandomNumber() {
+		for(int i = 0; i < 4; i++) {
+			theta.setAsDouble((Math.random() - 0.5) * Math.pow(10, 10), i, 0);
+		}
 	}
 }
 

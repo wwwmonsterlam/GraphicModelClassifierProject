@@ -21,22 +21,24 @@ public class Main
 	
     public static void main( String[] args ) throws IOException
     {
-//    	for(int i = 0; i < DATA_FILE_NAMES.length; i++) {
-//        	Utils.getTrainingSet(Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[i]));
-//        	Utils.getTestingSet(Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[i]));
-//    	}
-//    	
     	for(int i = 0; i < 11; i++) {
-	    	Matrix[] trainingSet = Utils.getTrainingSet(Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[i]));
-	    	Matrix[] testingSet = Utils.getTestingSet(Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[i]));
+    		Matrix[] dataSet = Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[i]);
+    		Utils.scaleData(dataSet);
+	    	Matrix[] trainingSet = Utils.getTrainingSet(dataSet);
+//	    	logger.debug(trainingSet[0].toString());
+	    	Matrix[] testingSet = Utils.getTestingSet(dataSet);
 	    	
 	    	LogisticClassifier logisticClassifier = new LogisticClassifier(trainingSet, testingSet);
 	    	
 	    	logger.debug("result of the {" + (i + 1) + "}th dataset:");
-	    	logger.debug("correction rate: " + logisticClassifier.getCorrectionRateUsingTestingSet());
+	    	logger.debug("correction rate: " + logisticClassifier.getCorrectionRateUsingTestingSetUsingOriginAsStartingPoint());
 	    	if(i <= 6) {
 	    		logger.debug("final theta is: " + logisticClassifier.getTheta().toString());
 	    	}
     	}
+//    	for(int i = 0; i < 10; i++) {
+//    		double a = (Math.random() - 0.5) * Math.pow(10, 300);
+//    		logger.debug(a + "");
+//    	}
     }
 }
