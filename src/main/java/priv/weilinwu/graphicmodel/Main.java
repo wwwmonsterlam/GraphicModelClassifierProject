@@ -21,7 +21,7 @@ public class Main
 	
     public static void main( String[] args ) throws IOException
     {
-    	for(int i = 0; i < 11; i++) {
+    	for(int i = 2; i < 11; i++) {
     		Matrix[] dataSet = Utils.dataLoader(RESOURCE_PATH + DATA_FILE_NAMES[i]);
     		Utils.scaleData(dataSet);
 	    	Matrix[] trainingSet = Utils.getTrainingSet(dataSet);
@@ -31,7 +31,7 @@ public class Main
 	    	LogisticClassifier logisticClassifier = new LogisticClassifier(trainingSet, testingSet);
 	    	
 	    	logger.debug("result of the {" + (i + 1) + "}th dataset:");
-	    	logger.debug("correction rate: " + logisticClassifier.getCorrectionRateUsingTestingSetUsingOriginAsStartingPoint());
+	    	logger.debug("correction rate: " + logisticClassifier.getCorrectionRateUsingTestingSetUsingMultipleRandomStartingPoint(100));
 	    	if(i <= 6) {
 	    		logger.debug("final theta is: " + logisticClassifier.getTheta().toString());
 	    	}

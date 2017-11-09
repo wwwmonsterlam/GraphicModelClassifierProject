@@ -136,15 +136,6 @@ public class LogisticClassifier {
 	// return true if theta is updated, return false if the difference is within tolerance
 	public boolean updateTheta() {
 		generateNewGradientDescendDirection();
-//		double stepSize = getOptimalStepSize();
-////		double stepSize = 0.005;
-//		Matrix difference = gradientDescendDirection.times(stepSize);
-//		if(isWithinTolerance(difference)) {
-//			return false;
-//		} else {
-//			theta = theta.plus(gradientDescendDirection.times(stepSize));
-//			return true;
-//		}
 		if(isWithinTolerance(gradientDescendDirection)) {
 			return false;
 		} else {
@@ -206,10 +197,12 @@ public class LogisticClassifier {
 		while(updateTheta()) {
 //			logger.debug("The {" + i + "} update finished!");
 //			logger.debug("the value of objective function is: " + getValueOfObjectiveFunction());
-			System.out.print(".");
+			if(i % 10 == 0) {
+				System.out.print(".");
+			}
 			i++;
 		}
-		
+		System.out.print("\n");
 		logger.debug("Total iteration count: " + i);
 	}
 	
@@ -234,10 +227,9 @@ public class LogisticClassifier {
 	
 	public double getCorrectionRateUsingTestingSetUsingMultipleRandomStartingPoint(int randomStartingPointAmount) {
 		if(randomStartingPointAmount <= 0) {
-			return 0;
+			randomStartingPointAmount = 1;
 		}
 		
-		setThetaUsingRandomNumber();
 		long sizeOfTesingSet = testingSet[0].getColumnCount() * 2;
 		double correctionRate = 0;
 		
@@ -258,6 +250,8 @@ public class LogisticClassifier {
 			
 			double tempRate = (double)(sizeOfTesingSet - errorPredictionCount) / sizeOfTesingSet;
 			correctionRate = Math.max(correctionRate, tempRate);
+
+			setThetaUsingRandomNumber();
 		}
 		
 		return correctionRate;
@@ -265,7 +259,7 @@ public class LogisticClassifier {
 	
 	public void setThetaUsingRandomNumber() {
 		for(int i = 0; i < 4; i++) {
-			theta.setAsDouble((Math.random() - 0.5) * Math.pow(10, 10), i, 0);
+			theta.setAsDouble((Math.random() - 0.5) * Math.pow(10, 2), i, 0);
 		}
 	}
 }
