@@ -232,8 +232,10 @@ public class LogisticClassifier {
 		
 		long sizeOfTesingSet = testingSet[0].getColumnCount() * 2;
 		double correctionRate = 0;
+		int repeatCount = randomStartingPointAmount;
 		
-		while(randomStartingPointAmount-- > 0) {
+		while(repeatCount-- > 0) {
+			logger.info("The {" + (randomStartingPointAmount - repeatCount) + "}th run with random initialization:");
 			train();
 			int errorPredictionCount = 0;
 			
@@ -250,6 +252,9 @@ public class LogisticClassifier {
 			
 			double tempRate = (double)(sizeOfTesingSet - errorPredictionCount) / sizeOfTesingSet;
 			correctionRate = Math.max(correctionRate, tempRate);
+			if(correctionRate == 1.0) {
+				return 1.0;
+			}
 
 			setThetaUsingRandomNumber();
 		}
