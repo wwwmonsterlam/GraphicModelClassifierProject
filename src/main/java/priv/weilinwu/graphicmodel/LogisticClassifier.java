@@ -1,13 +1,10 @@
 package priv.weilinwu.graphicmodel;
 
-import java.io.ObjectInputStream.GetField;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ujmp.core.DenseMatrix;
 import org.ujmp.core.Matrix;
 import org.ujmp.core.calculation.Calculation.Ret;
-import org.ujmp.core.doublematrix.calculation.entrywise.creators.Zeros;
 
 public class LogisticClassifier {
 	public static final Logger logger = LoggerFactory.getLogger(LogisticClassifier.class);
@@ -164,9 +161,7 @@ public class LogisticClassifier {
 			for(int i = 0; i < trainingSampleCount; i++) {
 				// Get the i th sample
 				Matrix xi = trainingSet[z].subMatrix(Ret.NEW, 0, i, featureCount, i);
-//				logger.debug("xi is \n" + xi.toString());
 				Matrix newTheta = theta.plus(gradientDescendDirection.times(stepSize));
-//				logger.debug("new theta is" + newTheta.toString());
 				sum += gradientDescendDirection.transpose().mtimes(xi).getAsDouble(0, 0) *
 						(z - getValueOfLogisticFunction(newTheta, xi));
 //				logger.debug("test point 1: " + gradientDescendDirection.transpose().mtimes(xi).toString());

@@ -18,11 +18,6 @@ public class Utils {
 		matrixs[0] = ImportMatrixMAT.fromFile(file, "class_1");
 		matrixs[1] = ImportMatrixMAT.fromFile(file, "class_2");
 		
-//		logger.debug("The size of the matrix is " + matrixs[0].getRowCount() + " by " 
-//				+ matrixs[0].getColumnCount());
-//		logger.debug(matrixs[0].toString());
-//		logger.debug(matrixs[1].toString());
-		
 		return matrixs;
 	}
 	
@@ -34,9 +29,6 @@ public class Utils {
 		trainingSet[0] = matrixs[0].subMatrix(Ret.NEW, 0, 0, rowCount - 1, columnCount / 5 * 4 - 1);
 		trainingSet[1] = matrixs[1].subMatrix(Ret.NEW, 0, 0, rowCount - 1, columnCount / 5 * 4 - 1);
 		
-//		logger.debug("The size of training set is: " + trainingSet[0].getRowCount() + 
-//				" by " + trainingSet[0].getColumnCount());
-		
 		return trainingSet;
 	}
 	
@@ -47,9 +39,6 @@ public class Utils {
 		
 		testingSet[0] = matrixs[0].subMatrix(Ret.NEW, 0, columnCount / 5 * 4, rowCount - 1, columnCount - 1);
 		testingSet[1] = matrixs[1].subMatrix(Ret.NEW, 0, columnCount / 5 * 4, rowCount - 1, columnCount - 1);
-		
-//		logger.debug("The size of testing set is: " + testingSet[0].getRowCount() + 
-//				" by " + testingSet[0].getColumnCount());
 		
 		return testingSet;
 		
