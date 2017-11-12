@@ -41,6 +41,7 @@ public class Main
     }
     
     public static void summary(double[] accuracies) {
+    	logger.debug("");
     	logger.debug("####################################################");
     	logger.debug("Summary of classification using Logistic classifier");
     	logger.debug("####################################################");
