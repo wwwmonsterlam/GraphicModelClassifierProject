@@ -20,6 +20,8 @@ public class Main
 	
     public static void main( String[] args ) throws IOException
     {
+    	char choice = getUserChoice();
+    	int iterationCount = choice == 'a'? 1 : 100; 
     	double[] accuracies = new double[DATA_FILE_NAMES.length];
     	for(int i = 0; i < DATA_FILE_NAMES.length; i++) {
     		
@@ -32,9 +34,9 @@ public class Main
 	    	LogisticClassifier logisticClassifier = new LogisticClassifier(trainingSet, testingSet);
 	    	
 	    	logger.debug("Running logistic classifier using dataset {" + filePath + "} :");
-	    	accuracies[i] = logisticClassifier.getCorrectionRateUsingTestingSetUsingMultipleRandomStartingPoint(100);
+	    	accuracies[i] = logisticClassifier.getCorrectionRateUsingTestingSetUsingMultipleRandomStartingPoint(iterationCount);
 	    	logger.debug("######################################################################################");
-	    	logger.debug("correction rate (" + DATA_FILE_NAMES[i] + "): " + accuracies[i]);
+	    	logger.debug("correction rate (" + DATA_FILE_NAMES[i] + "): " + accuracies[i] + "\n");
     	}
     	
     	summary(accuracies);
@@ -48,5 +50,15 @@ public class Main
     	for(int i = 0; i < DATA_FILE_NAMES.length; i++) {
 	    	logger.debug("correction rate (" + DATA_FILE_NAMES[i] + "): " + accuracies[i]);
     	}
+    }
+    
+    public static char getUserChoice() throws IOException {
+    	logger.debug("##########################################################################################");
+    	logger.debug("Please Select how times of logistic classification would you like to run for each dataset");
+    	logger.debug("##########################################################################################");
+    	logger.debug("");
+    	logger.debug("If you input 'a', it would run for once (recommended for time consuming purpose)");
+    	logger.debug("If you input 'b', it would run for 100 times with different initialization (random), consuming lots of time but with better accuracy");
+    	return (char) System.in.read();
     }
 }
