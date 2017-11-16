@@ -20,9 +20,8 @@ public class Main
 	
     public static void main( String[] args ) throws IOException
     {
-    	while(true) {
 	    	char choice = getUserChoice();
-	    	int iterationCount = choice == 'a'? 1 : 100; 
+	    	int iterationCount = choice == 'a'? 1 : 100;
 	    	double[] accuracies = new double[DATA_FILE_NAMES.length];
 	    	for(int i = 0; i < DATA_FILE_NAMES.length; i++) {
 	    		
@@ -41,7 +40,8 @@ public class Main
 	    	}
 	    	
 	    	summary(accuracies);
-    	}
+
+	    	while(true);
     }
     
     public static void summary(double[] accuracies) {
