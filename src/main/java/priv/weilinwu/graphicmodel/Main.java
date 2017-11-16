@@ -58,7 +58,7 @@ public class Main
     
     public static char getUserChoice() throws IOException {
     	logger.debug("##########################################################################################");
-    	logger.debug("Please Select how times of logistic classification would you like to run for each dataset");
+    	logger.debug("Please Select how many times of logistic classification would you like to run for each dataset");
     	logger.debug("##########################################################################################");
     	logger.debug("");
     	logger.debug("If you input 'a', it would run for once (recommended for time consuming purpose)");
