@@ -1,6 +1,7 @@
 package priv.weilinwu.graphicmodel;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,10 @@ public class Main
 	    	double[] accuracies = new double[DATA_FILE_NAMES.length];
 	    	for(int i = 0; i < DATA_FILE_NAMES.length; i++) {
 	    		
-	    		String filePath = RESOURCE_PATH + DATA_FILE_NAMES[i];
+	    		//String filePath = RESOURCE_PATH + DATA_FILE_NAMES[i];
+	    		String classPath = URLDecoder.decode(Main.class.getClassLoader().getResource("").getPath());
+	    		logger.info(classPath);
+	    		String filePath = classPath + DATA_FILE_NAMES[i];
 	    		Matrix[] dataSet = Utils.dataLoader(filePath);
 	    		Utils.scaleData(dataSet);
 		    	Matrix[] trainingSet = Utils.getTrainingSet(dataSet);
